@@ -1,0 +1,77 @@
+*
+{
+        margin: 0px;
+        border: 0px;
+}
+
+
+div
+{
+        padding: 5px;
+}
+
+#heading
+{
+        font-size: 24px;
+        padding: 5px;
+}
+
+.methodHeading
+{
+        font-size: 22px;
+        padding: 5px;
+}
+
+
+.separator
+{
+        border-bottom: 2px solid grey;
+        margin-top: 5px;
+        margin-bottom: 5px;
+}
+
+.bold
+{
+        font-weight: bold;
+        float: left;
+}
+
+.floatl
+{
+        float: left;
+}
+
+.clear
+{
+        clear: both;
+}
+
+.history
+{
+        margin: 0px;
+        padding: 0px;
+        padding-left: 5px;
+}
+
+.methodTable
+{
+        padding-bottom: 50px;
+        width: 100%;
+}
+
+.methodHeading
+{
+        background: #eeeeee;
+        text-align: left;
+}
+
+.methodTable td
+{
+        padding-left: 5px;
+        
+}
+
+.tableLabel
+{
+        width: 287px;
+}
