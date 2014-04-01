@@ -10,6 +10,7 @@ Overview: Class to create a HTML document from PHP classes using a defined templ
 -----------------------------------------------------------------------------------------------------------
 History:
 28/03/2014      1.0	MJC	Created
+01/04/2014      1.0     MJC     Added improved output formatting on the history section
 -----------------------------------------------------------------------------------------------------------
 Uses:
 
@@ -52,6 +53,97 @@ class Documentor
         {
                 $this->addInfo("</body>");
                 $this->addInfo("</html>");         
+        }
+        
+        
+        private function createCSS()
+        {
+                $open = fopen($this->path."documents/style.css", "w");
+                
+                $css = "*
+                        {
+                                margin: 0px;
+                                border: 0px;
+                        }
+                        
+                        
+                        div
+                        {
+                                padding: 5px;
+                        }
+                        
+                        #heading
+                        {
+                                font-size: 24px;
+                                padding: 5px;
+                        }
+                        
+                        .methodHeading
+                        {
+                                font-size: 22px;
+                                padding: 5px;
+                        }
+                        
+                        
+                        .separator
+                        {
+                                border-bottom: 2px solid grey;
+                                margin-top: 5px;
+                                margin-bottom: 5px;
+                        }
+                        
+                        .bold
+                        {
+                                font-weight: bold;
+                                float: left;
+                        }
+                        
+                        .floatl
+                        {
+                                float: left;
+                        }
+                        
+                        .clear
+                        {
+                                clear: both;
+                        }
+                        
+                        .history
+                        {
+                                margin: 0px;
+                                padding: 0px;
+                                padding-left: 5px;
+                        }
+                        
+                        .history td
+                        {
+                                padding-right: 25px;
+                        }
+                        
+                        .methodTable
+                        {
+                                padding-bottom: 50px;
+                                width: 100%;
+                        }
+                        
+                        .methodHeading
+                        {
+                                background: #eeeeee;
+                                text-align: left;
+                        }
+                        
+                        .methodTable td
+                        {
+                                padding-left: 5px;
+                                
+                        }
+                        
+                        .tableLabel
+                        {
+                                width: 287px;
+                        }";
+                fwrite($open, $css);
+                fclose($open);
         }
         
                 
@@ -112,13 +204,40 @@ class Documentor
                                $dateOffset = $intCount+9;
                                
                                
-                               
+                               $this->addInfo("<table class='history'>");
                                while(is_numeric($this->contents[$dateOffset][0]))
                                {
-                                        $this->addInfo("<div class='floatl history'>".$this->contents[$dateOffset]."</div>\n");
-                                        $this->addInfo("<div class='clear'></div>");
+                                        $arrHistory = explode(' ',trim($this->contents[$dateOffset]));
+                                        
+                                        $intCounter = 0;
+                                        foreach($arrHistory as $arrIndHistory)
+                                        {
+                                                if(trim($arrIndHistory) == null)
+                                                {
+                                                        unset($arrHistory[$intCounter]);
+                                                }
+                                                
+                                                $intCounter++;
+                                        }
+                                        $arrHistory = array_values($arrHistory);
+                                        
+                                        
+                                        $this->addInfo("<tr><td>".$arrHistory[0]."</td><td>".$arrHistory[1]."</td>");
+                                        $this->addInfo("<td><strong>".$arrHistory[2]."</strong></td>");
+                                        $this->addInfo("<td><em>");
+                                        
+                                        for($intCount=3;$intCount<=count($arrHistory)-1;$intCount++)
+                                        {
+                                                $this->addInfo($arrHistory[$intCount]." ");
+                                        }
+                                        
+                                        $this->addInfo("</em></td></tr>");
+                                        
                                         $dateOffset++;
                                }
+                               $this->addInfo("</table>");
+                               
+                               $this->addInfo("<div class='clear'></div>");
                                
                                $this->addInfo("<div class='separator'></div>");
                                
@@ -200,6 +319,7 @@ class Documentor
         
         public function createDocument()
         {
+                $this->createCSS();
                 $this->buildFileHeader();
                 $this->buildClassFileInfo();
                 $this->buildMethodDocs();
