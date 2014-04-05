@@ -11,10 +11,13 @@ Overview: Class to create a HTML document from PHP classes using a defined templ
 History:
 28/03/2014      1.0	MJC	Created
 01/04/2014      1.0     MJC     Added improved output formatting on the history section
+05/04/2014      1.1     MJC     Improved the output formatting for both in and out parameters
 -----------------------------------------------------------------------------------------------------------
 Uses:
 
 */
+
+error_reporting(0);
 
 
 class Documentor
@@ -113,6 +116,22 @@ class Documentor
                                 margin: 0px;
                                 padding: 0px;
                                 padding-left: 5px;
+                        }
+                        
+                        .variable
+                        {
+                                color: #14b4dc;
+                        }
+                        
+                        .variableType
+                        {
+                                font-style: Italic;
+                                padding-left: 10px; 
+                        }
+                        
+                        .paramDesc
+                        {
+                                padding-left: 10px;
                         }
                         
                         .history td
@@ -252,7 +271,7 @@ class Documentor
         
         public function buildMethodDocs()
         {
-                $intCount = 0;
+                $intCount = 0;  
                 
                 foreach($this->contents as $indLine)
                 {
@@ -265,16 +284,16 @@ class Documentor
                                 
                                 while(strpos($this->contents[$intCounterTwo], '--------*/') === false)
                                 {
+                                
                                         if(strpos($this->contents[$intCounterTwo], '/*-----') === false)
                                         {
                                                 $label = trim(strstr($this->contents[$intCounterTwo], ':', true));
                                                 $content = trim(str_replace(':','',trim(strstr($this->contents[$intCounterTwo], ':'))));
                                                 
-                                                
                                                 if(($label !== '') && ($content == ''))
                                                 {
                                                         $label = '';
-                                                }
+                                                }                                                
                                                 
                                                 if(empty($content) && (!empty($this->contents[$intCounterTwo])))
                                                 {
@@ -286,8 +305,148 @@ class Documentor
                                                                 }
                                                         }   
                                                 }
-                                               
+                                                
+                                                $bAdded = false;
+                                                $intCounterThree = $intCounterTwo;
+                                                
+                                                
+                                                //if label says in and label after is nothing but content exists....
+                                                if(($label == 'In'))
+                                                {
+                                                        while((strpos($this->contents[$intCounterThree], '---') === false) && (strpos($this->contents[$intCounterThree], 'Out') === false))
+                                                        {
+                                                                $strContent = trim(str_replace("In:",'',$this->contents[$intCounterThree]));
+                                                                $arrContent = explode(' ',$strContent);
+                                                                
+                                                                $intCounterFour = 0;
+                                                                foreach($arrContent as $arrIndContent)
+                                                                {
+                                                                        if(trim($arrIndContent) == null)
+                                                                        {
+                                                                                unset($arrContent[$intCounterFour]);
+                                                                        }
+                                                                        
+                                                                        $intCounterFour++;
+                                                                }
+                                                                $arrContent = array_values($arrContent);
+                                                                
+                                                                //print_r($arrContent);
+                                                                
+                                                                if(sizeof($arrContent)>0)
+                                                                {
+                                                                        $strParam = "<span class='variable'>".$arrContent[0]."</span>";
+                                                                        $strParam .= "<span class='variableType'>".$arrContent[1]."</span>";
+                                                                        
+                                                                        $strParam .= "<span class='paramDesc'>";
+                                                                                for($i=2;$i<=count($arrContent)-1;$i++)
+                                                                                {
+                                                                                        $strParam .= $arrContent[$i]." ";
+                                                                                }
+                                                                        $strParam .= "</span>";
+                                                                        
+                                                                        //echo $strParam."<br>";
+                                                                        
+                                                                        $bAdded = true;
+                                                                        $content = $strParam;
+                                                                        
+                                                                        $isLabel = false;
+                                                                        $setLabel = '';
+                                                                        if($intCounterThree >0)
+                                                                        {
+                                                                                $isLabel = true;
+                                                                        }
+                                                                        if($isLabel == true)
+                                                                        {
+                                                                                $setLabel = $label;
+                                                                        }
+                                                                        
+                                                                        if(isset($this->contents[$intCounterThree]))
+                                                                        {
+                                                                                unset($this->contents[$intCounterThree]);
+                                                                        }
+                                                                        $this->addInfo("<tr><td class='tableLabel'>".$setLabel."</td><td>".$content."</td>\n");
+                                                                        
+                                                                        $label = '';
+                                                                        $content = '';
+                                                                        
+                                                                         
+                                                                }
+                                                                
+                                                                $intCounterThree++;
+                                                        }
+                                                }
+                                                
+                                                
+                                                $intCounterThree = $intCounterTwo;
+                                                if($label == 'Out')
+                                                {
+                                                        $strContent = trim(str_replace("Out:",'',$this->contents[$intCounterThree]));
+                                                        $arrContent = explode(' ',$strContent);
+                                                        
+                                                        
+                                                        $intCounterFour = 0;
+                                                        foreach($arrContent as $arrIndContent)
+                                                        {
+                                                                if(trim($arrIndContent) == null)
+                                                                {
+                                                                        unset($arrContent[$intCounterFour]);
+                                                                }
+                                                                
+                                                                $intCounterFour++;
+                                                        }
+                                                        $arrContent = array_values($arrContent);
+                                                                
+                                                        if(sizeof($arrContent)>0)
+                                                        {
+                                                                $strParam = "<span class='variable'>".$arrContent[0]."</span>";
+                                                                $strParam .= "<span class='variableType'>".$arrContent[1]."</span>";
+                                                                
+                                                                $strParam .= "<span class='paramDesc'>";
+                                                                        for($i=2;$i<=count($arrContent)-1;$i++)
+                                                                        {
+                                                                                $strParam .= $arrContent[$i]." ";
+                                                                        }
+                                                                $strParam .= "</span>";
+                                                                
+                                                                //echo $strParam."<br>";
+                                                                
+                                                                $bAdded = true;
+                                                                $content = $strParam;
+                                                                
+                                                                $isLabel = false;
+                                                                $setLabel = '';
+                                                                if($intCounterThree >0)
+                                                                {
+                                                                        $isLabel = true;
+                                                                }
+                                                                if($isLabel == true)
+                                                                {
+                                                                        $setLabel = $label;
+                                                                }
+                                                                
+                                                                if(isset($this->contents[$intCounterThree]))
+                                                                {
+                                                                        unset($this->contents[$intCounterThree]);
+                                                                }
+                                                                $this->addInfo("<tr><td class='tableLabel'>".$setLabel."</td><td>".$content."</td>\n");
+                                                                
+                                                                $label = '';
+                                                                $content = '';
+                                                                
+                                                                 
+                                                        }
+                                                        
+                                                        $intCounterThree++;
+                                                        
+                                                }
+                                                
+                                                
+                                                
                                                 $this->addInfo("<tr><td class='tableLabel'>".$label."</td><td>".$content."</td>\n");
+                                                
+                                                
+                                                        
+                                                
                                                 
                                         }
                                         $intCounterTwo++; 
