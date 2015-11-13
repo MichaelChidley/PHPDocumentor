@@ -4,9 +4,9 @@
 -----------------------------------------------------------------------------------------------------------
 File: index.php
 Version: 1.0
-Release Date: 
+Release Date:
 -----------------------------------------------------------------------------------------------------------
-Overview: Page documentor      
+Overview: Page documentor
 -----------------------------------------------------------------------------------------------------------
 History:
 28/03/2014      1.0	MJC	Created
@@ -33,8 +33,8 @@ foreach($files as $indFiles)
                         $document->setPath($path);
                         $document->setFileName($indFiles);
                         $document->createDocument();
-                }                                              
-        }   
+                }
+        }
 }
 
 
